@@ -21,11 +21,17 @@ public class Mubox extends JFrame {
 	
 	private ImageIcon exitButtonEnteredImage = new ImageIcon(Main.class.getResource("../Images/exitButtonEntered.png"));
 	private ImageIcon exitButtonBasicImage = new ImageIcon(Main.class.getResource("../Images/exitButtonBasic.png"));
+	private ImageIcon startButtonEnteredImage = new ImageIcon(Main.class.getResource("../Images/startButtonEntered.png"));
+	private ImageIcon startButtonBasicImage = new ImageIcon(Main.class.getResource("../Images/startButtonBasic.png"));
+	private ImageIcon quitButtonEnteredImage = new ImageIcon(Main.class.getResource("../Images/quitButtonEntered.png"));
+	private ImageIcon quitButtonBasicImage = new ImageIcon(Main.class.getResource("../Images/quitButtonBasic.png"));
 	
 	private Image background = new ImageIcon(Main.class.getResource("../Images/background.jpg")).getImage();
 	private JLabel menubar = new JLabel(new ImageIcon(Main.class.getResource("../Images/menuBar.png")));
 	
 	private JButton exitButton = new JButton(exitButtonBasicImage);
+	private JButton startButton = new JButton(startButtonBasicImage);
+	private JButton quitButton = new JButton(quitButtonBasicImage);
 	
 	private int mouseX, mouseY; //메뉴바를 잡고 흔들수있다.
 	
@@ -89,8 +95,68 @@ public class Mubox extends JFrame {
 		});
 		add(exitButton);
 		
+		startButton.setBounds(600, 520, 270, 100); //x축, y축, 가로크기, 세로크기
+		startButton.setBorderPainted(false);
+		startButton.setContentAreaFilled(false);
+		startButton.setFocusPainted(false);
+		startButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				startButton.setIcon(startButtonEnteredImage); //마우스가 올라갈때 이미지가 entered로 바뀐다
+				startButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); //마우스를 올리면 커서가 손가락모양이 된다
+				Music buttonEnterdMusic = new Music("buttonEnteredMusic.mp3", false);
+				buttonEnterdMusic.start();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				startButton.setIcon(startButtonBasicImage); //마우스에서 나올때 원래 색으로 돌아간다
+				startButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); //손가락 모양의 커서를 되돌린다.
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Music buttonEnterdMusic = new Music("buttonPressedMusic.mp3", false);
+				buttonEnterdMusic.start();
+				// 게임 시작 이벤트
+				startButton.setVisible(false);
+				quitButton.setVisible(false);
+				background = new ImageIcon(Main.class.getResource("../Images/mainBackground.jpg")).getImage();
+			}
+		});
+		add(startButton);
+		
+		quitButton.setBounds(900, 520, 270, 100);
+		quitButton.setBorderPainted(false);
+		quitButton.setContentAreaFilled(false);
+		quitButton.setFocusPainted(false);
+		quitButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				quitButton.setIcon(quitButtonEnteredImage); //마우스가 올라갈때 이미지가 entered로 바뀐다
+				quitButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); //마우스를 올리면 커서가 손가락모양이 된다
+				Music buttonEnterdMusic = new Music("buttonEnteredMusic.mp3", false);
+				buttonEnterdMusic.start();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				quitButton.setIcon(quitButtonBasicImage); //마우스에서 나올때 원래 색으로 돌아간다
+				quitButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); //손가락 모양의 커서를 되돌린다.
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Music buttonEnterdMusic = new Music("buttonPressedMusic.mp3", false);
+				buttonEnterdMusic.start();
+				try {
+					Thread.sleep(1000); //소리가 나온다음 정상적으로 
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
+				System.exit(0); //종료
+			}
+		});
+		add(quitButton);
+		
 		Music intromusic = new Music("intromusic.mp3", true);
-		intromusic.start();
+		intromusic.start(); //인트로 뮤직 스타트
 	}
 	public void paint(Graphics g) {
 		screenImage = createImage(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
