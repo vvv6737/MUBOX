@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.PaintContext;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,8 +31,6 @@ public class Mubox extends JFrame {
 	private ImageIcon rightButtonEnteredImage = new ImageIcon(Main.class.getResource("../Images/rightButtonEntered.png"));
 	private ImageIcon rightButtonBasicImage = new ImageIcon(Main.class.getResource("../Images/rightButtonBasic.png"));
 	
-	private Image titleImage = new ImageIcon(Main.class.getResource("../Images/Erase You title image.png")).getImage();
-	private Image selectedImage = new ImageIcon(Main.class.getResource("../Images/CHANGMO - Erase You.png")).getImage();
 	private Image background = new ImageIcon(Main.class.getResource("../Images/background.jpg")).getImage();
 	private JLabel menubar = new JLabel(new ImageIcon(Main.class.getResource("../Images/menuBar.png")));
 	
@@ -46,6 +44,16 @@ public class Mubox extends JFrame {
 	
 	private boolean isMainScreen = false;
 	
+	ArrayList<Track> trackList = new ArrayList<Track>();
+	
+	private Image titleImage;
+	private Image selectedImage;
+	//밑처럼 길게 쓸필요 없이 선언만 해도 된다
+	//private Image titleImage = new ImageIcon(Main.class.getResource("../Images/Erase You title image.png")).getImage();
+	//private Image selectedImage = new ImageIcon(Main.class.getResource("../Images/CHANGMO - Erase You.png")).getImage();
+	private Music selectedMusic;
+	private int nowSelected = 0;
+	
 	public Mubox() {
 		setUndecorated(true);
 		setTitle("MUBOX");
@@ -57,6 +65,13 @@ public class Mubox extends JFrame {
 		setBackground(new Color(0, 0, 0, 0)); //paintComponents을 했을때 배경이 하얀색으로 바뀜
 		setLayout(null); //버튼이나 JLabel을 넣었을 때 그 위치 그대로 
 		
+		Music intromusic = new Music("intromusic.mp3", true);
+		intromusic.start(); //인트로 뮤직 스타트
+		
+		trackList.add(new Track("Erase You title image.png", "CHANGMO - Erase You.jpg", "CHANGMO - Erase You.jpg", "CHANGMO - Erase You selected.mp3", "CHANGMO - Erase You.mp3"));
+		trackList.add(new Track("Daydreamin title image.png", "Layone - Daydreamin.jpg", "Layone - Daydreamin.jpg", "Layone - Daydreamin selected.mp3", "Layone - Daydreamin.mp3"));
+		trackList.add(new Track("john cena title image.png", "yumdda - john cena.jpg", "yumdda - john cena.jpg", "yumdda - john cena select.mp3", "yumdda - john cena.mp3"));
+
 		menubar.setBounds(0, 0, 1240, 30); //메뉴바 위치와 크기을 정해주는것
 		menubar.addMouseListener(new MouseAdapter() {
 			@Override
@@ -128,6 +143,8 @@ public class Mubox extends JFrame {
 				Music buttonEnterdMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnterdMusic.start();
 				// 게임 시작 이벤트
+				intromusic.close();
+				selectTrack(0);
 				startButton.setVisible(false);
 				quitButton.setVisible(false);
 				leftButton.setVisible(true);
@@ -161,6 +178,7 @@ public class Mubox extends JFrame {
 				Music buttonEnterdMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnterdMusic.start();
 				// 왼쪽 버튼 이벤트
+				selectLeft();
 			}
 		});
 		add(leftButton);
@@ -188,6 +206,7 @@ public class Mubox extends JFrame {
 				Music buttonEnterdMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnterdMusic.start();
 				// 오른쪽 버튼 이벤트
+				selectright();
 			}
 		});
 		add(rightButton);
@@ -224,8 +243,7 @@ public class Mubox extends JFrame {
 		add(quitButton);
 		
 		
-		Music intromusic = new Music("intromusic.mp3", true);
-		intromusic.start(); //인트로 뮤직 스타트
+		
 	}
 	
 	public void paint(Graphics g) {
@@ -241,8 +259,32 @@ public class Mubox extends JFrame {
 			g.drawImage(selectedImage, 400, 100, null);
 			g.drawImage(titleImage, 340, 70, null);
 		}
-			
 		paintComponents(g);
 		this.repaint();
+	}
+	
+	public void selectTrack(int nowSelected) {
+		if(selectedMusic != null)
+			selectedMusic.close();
+		//Track클래스에서 가져온다.
+		titleImage = new ImageIcon(Main.class.getResource("../Images/" + trackList.get(nowSelected).getTitleImage())).getImage();
+		selectedImage = new ImageIcon(Main.class.getResource("../Images/" + trackList.get(nowSelected).getStartImage())).getImage();
+		selectedMusic = new Music(trackList.get(nowSelected).getStartMusic(), true);
+		selectedMusic.start();
+	}
+	
+	public void selectLeft() { //왼쪽 선택시
+		if(nowSelected == 0) 
+			nowSelected = trackList.size() - 1;
+		else
+			nowSelected--;
+		selectTrack(nowSelected);
+	}
+	public void selectright() { //오른쪽 선택시
+		if(nowSelected == trackList.size() - 1) 
+			nowSelected = 0;
+		else
+			nowSelected++;
+		selectTrack(nowSelected);
 	}
 }
